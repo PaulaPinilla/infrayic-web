@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel Inteligente | Infrayic S.A.S.</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="sitio">
+  <div class="barra">
+    <div class="marca">Infrayic S.A.S.<span class="sub">Gestión de infraestructura urbana</span></div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="empresa.html">La empresa</a>
+      <a href="bogovial.html">Proyecto BogoVial</a>
+      <a href="equipo.html">Nuestro equipo</a>
+      <a href="reporta.html">Reporta un daño</a>
+      <a href="panel.html" class="activo">Panel Inteligente</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <img src="assets/images/logo.png" alt="Infrayic S.A.S." class="logo-derecha">
+  </div>
+</header>
+
+<main>
+
+  <div class="login-ingeniero" id="loginIngeniero">
+    <h2>Acceso del ingeniero a cargo</h2>
+    <p class="nota">Esta sección es solo para el ingeniero de Infrayic S.A.S. Ingresa el PIN para ver y gestionar los reportes.</p>
+    <input type="password" id="campoPin" placeholder="PIN" maxlength="6" inputmode="numeric">
+    <div>
+      <button class="boton" id="botonEntrarPin">Entrar</button>
+    </div>
+    <p class="login-error" id="errorPin">PIN incorrecto. Intenta de nuevo.</p>
+  </div>
+
+  <div id="contenidoPanel" style="display:none">
+
+    <section class="seccion">
+      <h2>Panel Inteligente de Priorización</h2>
+      <p>BogoVial no solo almacena reportes: los analiza con tres módulos para decidir qué daño atender primero y anticipar dónde pueden aparecer nuevos problemas.</p>
+      <div class="tarjetas">
+        <div class="tarjeta">
+          <h3>🧠 Clasificador</h3>
+          <p>Analiza la foto del daño y estima su severidad (algoritmo de procesamiento de imágenes, ver "Reporta un daño").</p>
+        </div>
+        <div class="tarjeta">
+          <h3>⚠️ Priorizador</h3>
+          <p>Cruza severidad, cercanía a colegios/hospitales, reportes repetidos y tiempo sin solución en un puntaje de prioridad.</p>
+        </div>
+        <div class="tarjeta">
+          <h3>🔮 Predictor</h3>
+          <p>Agrupa los reportes históricos por zona para estimar qué puntos del sector piloto tienen mayor probabilidad de presentar nuevos daños.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <h2>Estadísticas generales</h2>
+      <p class="nota">Estas cifras son reales y están en la nube: cada reporte que un ciudadano envía desde "Reporta un daño" aparece aquí automáticamente y en tiempo real.</p>
+      <div class="stats-grid" id="statsGrid"></div>
+      <div style="text-align:center">
+        <button class="boton-secundario" id="botonLimpiar">Borrar todos los reportes</button>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <h2>Reportes por tipo y por prioridad</h2>
+      <div class="graficos-grid">
+        <div class="contenedor-grafico">
+          <h3>Reportes por tipo de daño</h3>
+          <canvas id="graficoTipo"></canvas>
+        </div>
+        <div class="contenedor-grafico">
+          <h3>Reportes por nivel de prioridad</h3>
+          <canvas id="graficoPrioridad"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <section class="seccion">
+      <h2>Cola de atención priorizada</h2>
+      <p>Todos los reportes ordenados de mayor a menor puntaje de prioridad. Marca el estado de cada uno a medida que haces las visitas, y deja comentarios de seguimiento — el ciudadano los ve en "Reporta un daño".</p>
+      <table class="tabla tabla-prioridad" id="tablaReportes">
+        <thead>
+          <tr><th>Zona</th><th>Tipo</th><th>Severidad</th><th>Prioridad</th><th>Puntaje</th><th>Fecha</th><th>Estado</th><th>Comentarios</th></tr>
+        </thead>
+        <tbody id="cuerpoTablaReportes"></tbody>
+      </table>
+    </section>
+
+    <section class="seccion">
+      <h2>Predicción: zonas con mayor riesgo</h2>
+      <p>El modelo agrupa los reportes acumulados por zona. Las zonas con más reportes y mayor puntaje acumulado tienen mayor probabilidad de presentar nuevos daños.</p>
+      <div id="zonasRiesgo"></div>
+    </section>
+
+  </div>
+
+</main>
+
+<footer class="sitio">Infrayic S.A.S.</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/priorizador.js"></script>
+<script src="js/panel.js"></script>
+<script>
+/* PIN de acceso del ingeniero. Cámbialo por el que tú quieras —
+   está aquí mismo, en texto plano, porque es una protección sencilla
+   para el proyecto académico, no un sistema de autenticación real. */
+const PIN_INGENIERO = "2468";
+
+document.getElementById("botonEntrarPin").addEventListener("click", intentarEntrar);
+document.getElementById("campoPin").addEventListener("keydown", (e) => {
+  if (e.key === "Enter") intentarEntrar();
+});
+
+function intentarEntrar() {
+  const valor = document.getElementById("campoPin").value;
+  if (valor === PIN_INGENIERO) {
+    document.getElementById("loginIngeniero").style.display = "none";
+    document.getElementById("contenidoPanel").style.display = "block";
+    iniciarEscuchaReportes();
+  } else {
+    document.getElementById("errorPin").style.display = "block";
+  }
+}
+</script>
+
+</body>
+</html>

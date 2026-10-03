@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reporta un daño | Infrayic S.A.S.</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="sitio">
+  <div class="barra">
+    <div class="marca">Infrayic S.A.S.<span class="sub">Gestión de infraestructura urbana</span></div>
+    <nav class="menu">
+      <a href="index.html">Inicio</a>
+      <a href="empresa.html">La empresa</a>
+      <a href="bogovial.html">Proyecto BogoVial</a>
+      <a href="equipo.html">Nuestro equipo</a>
+      <a href="reporta.html" class="activo">Reporta un daño</a>
+      <a href="panel.html">Panel Inteligente</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <img src="assets/images/logo.png" alt="Infrayic S.A.S." class="logo-derecha">
+  </div>
+</header>
+
+<main>
+
+  <section class="seccion">
+    <h2>Reporta un daño en la vía</h2>
+    <p>Sube una foto del hueco, el andén dañado o la señalización deteriorada. La inteligencia artificial de BogoVial analiza la imagen, estima la severidad y decide la prioridad de atención — tú solo cuentas dónde fue.</p>
+  </section>
+
+  <section class="seccion panel-ia">
+
+    <div class="zona-carga" id="zonaCarga">
+      <p><strong>Toca para tomar una foto o subir una desde tu galería</strong></p>
+      <p class="nota">Formatos JPG o PNG</p>
+      <input type="file" id="entradaArchivo" accept="image/*" capture="environment" style="display:none">
+    </div>
+
+    <div class="previa-contenedor">
+      <img id="previa" style="display:none" alt="Foto del reporte">
+      <span class="badge badge-sobre-foto" id="badgeSobreFoto"></span>
+    </div>
+
+    <div style="text-align:center">
+      <button class="boton" id="botonAnalizar" disabled>Analizar foto con IA</button>
+    </div>
+
+    <div class="resultado" id="resultado">
+      <h3 id="resultadoTitulo"></h3>
+      <p id="resultadoDescripcion"></p>
+      <p class="nota">Indicador de densidad de bordes detectado por el sistema: <span id="resultadoDensidad"></span>%</p>
+    </div>
+
+    <div class="resultado" id="panelPrioridad">
+      <h3>Cuéntale al sistema dónde fue</h3>
+      <p class="nota">Con estos datos y la foto, la IA calcula la prioridad real por sí sola — no tienes que calcular nada.</p>
+
+      <div class="campo">
+        <label for="campoTipo">Tipo de daño</label>
+        <select id="campoTipo">
+          <option value="hueco">Hueco en la vía</option>
+          <option value="anden">Andén dañado</option>
+          <option value="senalizacion">Señalización deteriorada</option>
+          <option value="otro">Otro</option>
+        </select>
+      </div>
+
+      <div class="campo">
+        <label for="campoZona">Ubicación o punto de referencia</label>
+        <input type="text" id="campoZona" placeholder="Ej: Calle 48 con Carrera 16, Chapinero">
+      </div>
+
+      <div class="campo-check">
+        <input type="checkbox" id="campoColegioHospital">
+        <label for="campoColegioHospital">Está a menos de 200 m de un colegio u hospital</label>
+      </div>
+
+      <div class="campo">
+        <label for="campoDias">Días que lleva el daño sin solución</label>
+        <input type="number" id="campoDias" min="0" value="0">
+      </div>
+
+      <div style="text-align:center">
+        <button class="boton" id="botonPriorizar">Analizar con IA y guardar reporte</button>
+      </div>
+
+      <div class="franja-ia" id="cargandoIA" style="display:none">
+        <div class="spinner"></div>
+        <p class="nota">Analizando con inteligencia artificial&hellip;</p>
+      </div>
+
+      <div class="resultado" id="resultadoPrioridad">
+        <h3 id="prioridadTitulo"></h3>
+        <p id="prioridadDescripcion"></p>
+        <p class="nota">Así llegó la IA a este resultado:</p>
+        <ul class="desglose" id="prioridadDesglose"></ul>
+        <p id="prioridadExplicacion" style="margin-top:14px; font-size:14px;"></p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="seccion">
+    <h3>Cómo funciona este análisis</h3>
+    <p>BogoVial maneja dos cosas distintas, cada una con 3 niveles: <strong>Bajo</strong>, <strong>Medio</strong> y <strong>Alto</strong>.</p>
+    <div class="tarjetas">
+      <div class="tarjeta">
+        <h3>1. Severidad (la foto)</h3>
+        <p>Qué tan dañada se ve la vía <strong>solo mirando la imagen</strong>. <span class="badge badge-bajo">Bajo</span> daño leve. <span class="badge badge-medio">Medio</span> daño moderado. <span class="badge badge-alto">Alto</span> daño grave o riesgoso.</p>
+      </div>
+      <div class="tarjeta">
+        <h3>2. Prioridad (el resultado final)</h3>
+        <p>En qué orden se debe atender, comparado con los demás reportes. <span class="badge badge-bajo">Baja</span> 0 a 39 puntos. <span class="badge badge-medio">Media</span> 40 a 79 puntos. <span class="badge badge-alto">Alta</span> 80 puntos o más.</p>
+      </div>
+    </div>
+    <p style="margin-top:18px">La severidad solo usa la foto. La prioridad final suma la severidad <strong>más</strong> otros datos: qué tan cerca está de un colegio u hospital, cuántos reportes parecidos ya hay en esa zona, cuántos días lleva sin solución, y a cuántas personas afecta ese tipo de daño. Por eso una foto con severidad alta puede terminar con prioridad media: el daño se ve grave, pero los demás factores no suman lo suficiente para ponerlo primero en la fila.</p>
+    <p class="nota">El análisis de la foto corre en tu navegador con un algoritmo de procesamiento de imágenes (detección de bordes), sin enviar la imagen a ningún servidor. Es la versión prototipo del proyecto académico; la versión de producción de BogoVial reemplazaría esto por un modelo de visión por computador entrenado con fotos reales de las vías de Bogotá, clasificadas por Ingeniería Civil.</p>
+  </section>
+
+  <section class="seccion">
+    <h2>Consulta el estado de los reportes</h2>
+    <p>Aquí puedes ver en qué va cada reporte y los comentarios de seguimiento que deja el equipo de Ingeniería Civil — para que sepas que tu reporte sí fue visto y no quedó ignorado. Esta tabla es solo de consulta; el ingeniero a cargo es quien actualiza el estado desde el Panel Inteligente.</p>
+    <table class="tabla tabla-prioridad" id="tablaSeguimiento">
+      <thead>
+        <tr><th>Zona</th><th>Tipo</th><th>Prioridad</th><th>Estado</th><th>Último comentario del equipo</th></tr>
+      </thead>
+      <tbody id="cuerpoTablaSeguimiento"></tbody>
+    </table>
+  </section>
+
+</main>
+
+<footer class="sitio">Infrayic S.A.S.</footer>
+
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+<script src="js/firebase-config.js"></script>
+<script src="js/analizador.js"></script>
+<script src="js/priorizador.js"></script>
+<script>
+const zonaCarga = document.getElementById("zonaCarga");
+const entradaArchivo = document.getElementById("entradaArchivo");
+const previa = document.getElementById("previa");
+const botonAnalizar = document.getElementById("botonAnalizar");
+const resultado = document.getElementById("resultado");
+const resultadoTitulo = document.getElementById("resultadoTitulo");
+const resultadoDescripcion = document.getElementById("resultadoDescripcion");
+const resultadoDensidad = document.getElementById("resultadoDensidad");
+const botonPriorizar = document.getElementById("botonPriorizar");
+const cargandoIA = document.getElementById("cargandoIA");
+const resultadoPrioridad = document.getElementById("resultadoPrioridad");
+const badgeSobreFoto = document.getElementById("badgeSobreFoto");
+
+function esperar(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+zonaCarga.addEventListener("click", () => entradaArchivo.click());
+
+entradaArchivo.addEventListener("change", () => {
+  const archivo = entradaArchivo.files[0];
+  if (!archivo) return;
+
+  const lector = new FileReader();
+  lector.onload = (e) => {
+    previa.src = e.target.result;
+    previa.style.display = "block";
+    previa.className = "";
+    badgeSobreFoto.style.display = "none";
+    botonAnalizar.disabled = false;
+    resultado.style.display = "none";
+    document.getElementById("panelPrioridad").style.display = "none";
+  };
+  lector.readAsDataURL(archivo);
+});
+
+let analisisActual = null;
+
+botonAnalizar.addEventListener("click", async () => {
+  botonAnalizar.disabled = true;
+  botonAnalizar.textContent = "Analizando...";
+
+  await esperar(400);
+
+  analisisActual = analizarImagen(previa);
+
+  resultadoTitulo.innerHTML =
+    '<span class="badge badge-' + analisisActual.nivel + '">' + analisisActual.etiqueta + "</span>";
+  resultadoDescripcion.textContent = analisisActual.recomendacion;
+  resultadoDensidad.textContent = analisisActual.densidad;
+
+  previa.className = "borde-" + analisisActual.nivel;
+  badgeSobreFoto.className = "badge badge-sobre-foto badge-" + analisisActual.nivel;
+  badgeSobreFoto.textContent = analisisActual.etiqueta;
+  badgeSobreFoto.style.display = "inline-block";
+
+  resultado.style.display = "block";
+  document.getElementById("panelPrioridad").style.display = "block";
+  resultadoPrioridad.style.display = "none";
+  cargandoIA.style.display = "none";
+  botonAnalizar.disabled = false;
+  botonAnalizar.textContent = "Analizar foto con IA";
+  botonPriorizar.textContent = "Analizar con IA y guardar reporte";
+  botonPriorizar.disabled = false;
+});
+
+botonPriorizar.addEventListener("click", async () => {
+  if (!analisisActual) return;
+
+  botonPriorizar.disabled = true;
+  resultadoPrioridad.style.display = "none";
+  cargandoIA.style.display = "block";
+
+  const datos = {
+    nivelSeveridad: analisisActual.nivel,
+    tipo: document.getElementById("campoTipo").value,
+    zona: document.getElementById("campoZona").value || "Sin especificar",
+    cercaColegioHospital: document.getElementById("campoColegioHospital").checked,
+    diasSinSolucion: Number(document.getElementById("campoDias").value) || 0,
+  };
+
+  const [prioridad] = await Promise.all([calcularPrioridad(datos), esperar(900)]);
+
+  document.getElementById("prioridadTitulo").innerHTML =
+    '<span class="badge badge-' + prioridad.nivel + '">' + prioridad.etiqueta + "</span>";
+  document.getElementById("prioridadDescripcion").textContent =
+    "Puntaje de prioridad calculado por la IA: " + prioridad.puntaje + " puntos";
+  document.getElementById("prioridadDesglose").innerHTML =
+    prioridad.desglose.map((linea) => "<li>" + linea + "</li>").join("");
+  document.getElementById("prioridadExplicacion").textContent =
+    explicarPrioridad(prioridad, datos);
+
+  await guardarReporte({
+    tipo: datos.tipo,
+    zona: datos.zona,
+    severidad: analisisActual.nivel,
+    prioridad: prioridad.nivel,
+    puntaje: prioridad.puntaje,
+    fecha: new Date().toISOString(),
+  });
+
+  cargandoIA.style.display = "none";
+  resultadoPrioridad.style.display = "block";
+  botonPriorizar.disabled = false;
+  botonPriorizar.textContent = "Reporte guardado ✓ (puedes analizar otro)";
+});
+
+const ETIQUETAS_TIPO_SEGUIMIENTO = {
+  hueco: "Hueco en la vía",
+  anden: "Andén dañado",
+  senalizacion: "Señalización",
+  otro: "Otro",
+};
+const ETIQUETAS_PRIORIDAD_SEGUIMIENTO = { alto: "Alta", medio: "Media", bajo: "Baja" };
+const ETIQUETAS_ESTADO_CLASE = {
+  "Pendiente": "pendiente",
+  "En proceso": "enproceso",
+  "Resuelto": "resuelto",
+};
+
+function renderSeguimiento(reportes) {
+  const cuerpo = document.getElementById("cuerpoTablaSeguimiento");
+  const ordenados = [...reportes].sort((a, b) => b.puntaje - a.puntaje);
+
+  if (ordenados.length === 0) {
+    cuerpo.innerHTML = '<tr><td colspan="5">Aún no hay reportes enviados.</td></tr>';
+    return;
+  }
+
+  cuerpo.innerHTML = ordenados.map((r) => {
+    const estado = r.estado || "Pendiente";
+    const claseEstado = ETIQUETAS_ESTADO_CLASE[estado] || "pendiente";
+    const comentarios = r.comentarios || [];
+    const ultimo = comentarios.length > 0 ? comentarios[comentarios.length - 1] : null;
+    const textoComentario = ultimo
+      ? ultimo.texto + " (" + new Date(ultimo.fecha).toLocaleDateString("es-CO") + ")"
+      : "Sin comentarios aún";
+
+    return `
+      <tr>
+        <td>${r.zona}</td>
+        <td>${ETIQUETAS_TIPO_SEGUIMIENTO[r.tipo] || r.tipo}</td>
+        <td><span class="badge badge-${r.prioridad}">${ETIQUETAS_PRIORIDAD_SEGUIMIENTO[r.prioridad]}</span></td>
+        <td><span class="badge badge-${claseEstado}">${estado}</span></td>
+        <td>${textoComentario}</td>
+      </tr>
+    `;
+  }).join("");
+}
+
+db.collection("reportes").onSnapshot((snapshot) => {
+  const reportes = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  renderSeguimiento(reportes);
+});
+</script>
+
+</body>
+</html>
