@@ -11,7 +11,8 @@
 <header class="sitio">
   <div class="barra">
     <div class="marca">Infrayic S.A.S.<span class="sub">Gestión de infraestructura urbana</span></div>
-    <nav class="menu">
+    <nav class="menu" id="menuNav">
+      <button class="cerrar-menu" id="botonCerrarMenu" aria-label="Cerrar menú">&times;</button>
       <a href="index.html">Inicio</a>
       <a href="empresa.html">La empresa</a>
       <a href="bogovial.html" class="activo">Proyecto BogoVial</a>
@@ -21,8 +22,12 @@
       <a href="contacto.html">Contacto</a>
     </nav>
     <img src="assets/images/logo.png" alt="Infrayic S.A.S." class="logo-derecha">
+    <button class="boton-menu" id="botonMenu" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<div class="fondo-menu" id="fondoMenu"></div>
 
 <main>
 
@@ -66,7 +71,7 @@
     <h2>Comparte la plataforma</h2>
     <p>Escanea este código QR para abrir BogoVial desde tu celular, o compártelo con la comunidad del sector piloto para que conozcan la plataforma y puedan reportar daños.</p>
     <div class="imagen-marco" style="max-width:260px; margin:0 auto">
-      <img src="https://infrayic-bogovial.netlify.app" alt="Código QR para abrir BogoVial" style="display:block; margin:0 auto">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=https://TU-LINK-DE-NETLIFY.netlify.app" alt="Código QR para abrir BogoVial" style="display:block; margin:0 auto">
     </div>
     <p class="nota" style="text-align:center">Este QR apunta al link de tu plataforma publicada. Una vez subas tu sitio a Netlify (o al hosting que uses), reemplaza <code>TU-LINK-DE-NETLIFY.netlify.app</code> en el código por tu link real.</p>
   </section>
@@ -74,6 +79,8 @@
 </main>
 
 <footer class="sitio">Infrayic S.A.S.</footer>
+
+<script src="js/menu.js"></script>
 
 </body>
 </html>

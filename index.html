@@ -3,20 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Infrayic S.A.S. | Gestión de infraestructura urbana</title>
+<title>La empresa | Infrayic S.A.S.</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
 <header class="sitio">
   <div class="barra">
-    <div class="marca">
-      Infrayic S.A.S.
-      <span class="sub">Gestión de infraestructura urbana</span>
-    </div>
-    <nav class="menu">
-      <a href="index.html" class="activo">Inicio</a>
-      <a href="empresa.html">La empresa</a>
+    <div class="marca">Infrayic S.A.S.<span class="sub">Gestión de infraestructura urbana</span></div>
+    <nav class="menu" id="menuNav">
+      <button class="cerrar-menu" id="botonCerrarMenu" aria-label="Cerrar menú">&times;</button>
+      <a href="index.html">Inicio</a>
+      <a href="empresa.html" class="activo">La empresa</a>
       <a href="bogovial.html">Proyecto BogoVial</a>
       <a href="equipo.html">Nuestro equipo</a>
       <a href="reporta.html">Reporta un daño</a>
@@ -24,64 +22,53 @@
       <a href="contacto.html">Contacto</a>
     </nav>
     <img src="assets/images/logo.png" alt="Infrayic S.A.S." class="logo-derecha">
+    <button class="boton-menu" id="botonMenu" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
-
-<section class="hero">
-  <div class="franja-chip">Proyecto interdisciplinar &mdash; Ingeniería Civil e Ingeniería de Sistemas</div>
-  <h1>Conectamos a los ciudadanos con el estado de las vías de Bogotá</h1>
-  <p>Infrayic S.A.S. desarrolla BogoVial, una plataforma y maqueta física para reportar, priorizar y hacer seguimiento a huecos, andenes dañados y señalización deteriorada en el espacio público.</p>
-  <div class="hero-cta">
-    <a href="reporta.html" class="boton">Reporta un daño</a>
-    <a href="bogovial.html" class="boton-outline">Conoce el proyecto</a>
-  </div>
-</section>
-
-<div class="stats-franja">
-  <div class="contenedor">
-    <div>
-      <div class="numero">38+</div>
-      <div class="etiqueta">Personas en el equipo</div>
-    </div>
-    <div>
-      <div class="numero">1</div>
-      <div class="etiqueta">Sector piloto: Chapinero</div>
-    </div>
-  </div>
-</div>
+<div class="fondo-menu" id="fondoMenu"></div>
 
 <main>
 
   <section class="seccion">
-    <h2>Qué hacemos</h2>
-    <div class="tarjetas-icono">
-      <div>
+    <h2>Quiénes somos</h2>
+    <p>Infrayic S.A.S. nació de una pregunta sencilla: ¿por qué sigue siendo tan difícil reportar un hueco en la calle? Somos un equipo de ingeniería civil e ingeniería de sistemas que construyó BogoVial para que cualquier persona en Bogotá pueda reportar un daño en segundos, y para que las entidades sepan cuál atender primero.</p>
+  </section>
+
+  <section class="seccion">
+    <h2>Lo que nos distingue</h2>
+    <div class="distintivos">
+      <div class="distintivo">
+        <div class="icono">🧩</div>
+        <h3>Dos ingenierías, un solo equipo</h3>
+        <p>Civil y Sistemas trabajan juntos desde el diseño: no es una app genérica con datos de obra pegados encima.</p>
+      </div>
+      <div class="distintivo">
         <div class="icono">📍</div>
-        <h3>Reportamos</h3>
-        <p>El ciudadano registra el problema desde su celular, con foto y ubicación exacta del punto crítico.</p>
+        <h3>Empezamos por un barrio real</h3>
+        <p>Chapinero, Calle 48 con Carrera 16: probamos todo ahí antes de prometer una ciudad entera.</p>
       </div>
-      <div>
-        <div class="icono">⚠️</div>
-        <h3>Priorizamos</h3>
-        <p>Clasificamos cada reporte por nivel de severidad para que las entidades atiendan primero lo más urgente.</p>
-      </div>
-      <div>
-        <div class="icono">✅</div>
-        <h3>Hacemos seguimiento</h3>
-        <p>Cada reporte queda visible y con estado de atención, para que la comunidad sepa que sí está siendo gestionado.</p>
+      <div class="distintivo">
+        <div class="icono">🤖</div>
+        <h3>Tecnología propia</h3>
+        <p>El análisis de severidad y el cálculo de prioridad son algoritmos que desarrollamos nosotros mismos.</p>
       </div>
     </div>
   </section>
 
   <section class="seccion">
-    <h2>El proyecto piloto</h2>
-    <p>BogoVial inicia su fase piloto en el sector de <strong>Calle 48 con Carrera 16, Chapinero</strong>, combinando una plataforma web con una maqueta física a escala que enlaza, mediante códigos QR, los puntos críticos reales con su información en línea.</p>
-    <p><a href="bogovial.html">Conoce el proyecto completo &rarr;</a></p>
+    <h2>Nuestro equipo en terreno</h2>
+    <div class="imagen-marco">
+      <div class="placeholder-img">Aquí va una foto real del equipo, la maqueta o el sector piloto (mándame la imagen y la pongo)</div>
+    </div>
   </section>
 
 </main>
 
 <footer class="sitio">Infrayic S.A.S.</footer>
+
+<script src="js/menu.js"></script>
 
 </body>
 </html>

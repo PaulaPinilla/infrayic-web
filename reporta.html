@@ -11,7 +11,8 @@
 <header class="sitio">
   <div class="barra">
     <div class="marca">Infrayic S.A.S.<span class="sub">Gestión de infraestructura urbana</span></div>
-    <nav class="menu">
+    <nav class="menu" id="menuNav">
+      <button class="cerrar-menu" id="botonCerrarMenu" aria-label="Cerrar menú">&times;</button>
       <a href="index.html">Inicio</a>
       <a href="empresa.html">La empresa</a>
       <a href="bogovial.html">Proyecto BogoVial</a>
@@ -21,8 +22,12 @@
       <a href="contacto.html">Contacto</a>
     </nav>
     <img src="assets/images/logo.png" alt="Infrayic S.A.S." class="logo-derecha">
+    <button class="boton-menu" id="botonMenu" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+<div class="fondo-menu" id="fondoMenu"></div>
 
 <main>
 
@@ -135,6 +140,7 @@
 
 <footer class="sitio">Infrayic S.A.S.</footer>
 
+<script src="js/menu.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>

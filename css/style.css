@@ -540,24 +540,88 @@ header.sitio{
 .badge-enproceso{background:#FBF1DC; color:var(--ambar)}
 .badge-resuelto{background:#E3F3EA; color:var(--verde-ok)}
 
+/* Menú de hamburguesa: oculto en pantallas grandes */
+.boton-menu{display:none}
+.cerrar-menu{display:none}
+.fondo-menu{display:none}
+
 @media (max-width: 640px){
-  .barra{
-    flex-direction:column;
-    text-align:center;
-  }
-  .marca{
-    justify-content:center;
-  }
   .hero h1{font-size:28px}
-  nav.menu{
-    justify-content:center;
-    gap:10px 18px;
-    font-size:14px;
-  }
+
   .logo-derecha{
-    height:52px;
-    max-width:140px;
+    height:40px;
+    max-width:100px;
     width:auto;
-    border-radius:8px;
+    border-radius:6px;
+  }
+
+  .boton-menu{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:5px;
+    width:34px;
+    height:34px;
+    background:none;
+    border:none;
+    cursor:pointer;
+    padding:0;
+  }
+  .boton-menu span{
+    display:block;
+    width:26px;
+    height:3px;
+    background:var(--amarillo);
+    border-radius:2px;
+  }
+
+  nav.menu{
+    position:fixed;
+    top:0;
+    right:-100%;
+    width:78%;
+    max-width:300px;
+    height:100vh;
+    background:var(--azul-oscuro);
+    flex-direction:column;
+    align-items:flex-start;
+    padding:80px 28px 28px;
+    gap:4px;
+    transition:right 0.3s ease;
+    z-index:200;
+    box-shadow:-6px 0 24px rgba(0,0,0,0.4);
+  }
+  nav.menu.abierto{
+    right:0;
+  }
+  nav.menu a{
+    font-size:17px;
+    width:100%;
+    padding:14px 0;
+    border-bottom:1px solid rgba(255,255,255,0.1);
+  }
+  nav.menu a:hover, nav.menu a.activo{
+    border-bottom:1px solid var(--amarillo);
+  }
+
+  .cerrar-menu{
+    display:block;
+    position:absolute;
+    top:18px;
+    right:20px;
+    background:none;
+    border:none;
+    color:var(--blanco);
+    font-size:32px;
+    cursor:pointer;
+    line-height:1;
+  }
+
+  .fondo-menu.activo{
+    display:block;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.5);
+    z-index:150;
   }
 }
