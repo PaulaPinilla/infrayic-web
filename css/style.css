@@ -286,11 +286,6 @@ footer.sitio{
   margin-top:10px;
 }
 
-@media (max-width: 640px){
-  .hero h1{font-size:28px}
-  nav.menu{gap:14px}
-}
-
 .campo{margin-bottom:16px}
 .campo label{display:block; font-weight:600; margin-bottom:6px; font-size:14px}
 .campo input[type=text], .campo input[type=number], .campo select{
@@ -449,9 +444,6 @@ header.sitio{
   border-radius:14px;
   box-shadow: 0 4px 14px rgba(0,0,0,0.35);
 }
-@media (max-width: 640px){
-  .logo-derecha{height:52px; max-width:140px; width:auto; border-radius:8px}
-}
 
 .previa-contenedor{
   position:relative;
@@ -547,3 +539,25 @@ header.sitio{
 .badge-pendiente{background:#FBE4E2; color:var(--rojo)}
 .badge-enproceso{background:#FBF1DC; color:var(--ambar)}
 .badge-resuelto{background:#E3F3EA; color:var(--verde-ok)}
+
+@media (max-width: 640px){
+  .barra{
+    flex-direction:column;
+    text-align:center;
+  }
+  .marca{
+    justify-content:center;
+  }
+  .hero h1{font-size:28px}
+  nav.menu{
+    justify-content:center;
+    gap:10px 18px;
+    font-size:14px;
+  }
+  .logo-derecha{
+    height:52px;
+    max-width:140px;
+    width:auto;
+    border-radius:8px;
+  }
+}
