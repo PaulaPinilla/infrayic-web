@@ -359,7 +359,7 @@ footer.sitio{
 header.sitio{
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 250;
   box-shadow: 0 2px 14px rgba(12,45,72,0.18);
 }
 
