@@ -361,7 +361,7 @@ header.sitio{
   position: sticky;
   top: 0;
   z-index: 250;
-  box-shadow: 0 2px 14px rgba(12,45,72,0.18);
+  
 }
 
 .boton{transition: transform 0.15s ease, box-shadow 0.15s ease}
