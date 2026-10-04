@@ -39,9 +39,14 @@
   <section class="seccion panel-ia">
 
     <div class="zona-carga" id="zonaCarga">
-      <p><strong>Toca para tomar una foto o subir una desde tu galería</strong></p>
+      <p><strong>Sube una foto del daño</strong></p>
       <p class="nota">Formatos JPG o PNG</p>
-      <input type="file" id="entradaArchivo" accept="image/*" style="display:none">
+      <div class="botones-carga">
+        <button type="button" class="boton-secundario" id="botonCamara">📷 Tomar foto</button>
+        <button type="button" class="boton-secundario" id="botonGaleria">🖼️ Elegir de galería</button>
+      </div>
+      <input type="file" id="entradaCamara" accept="image/*" capture="environment" style="display:none">
+      <input type="file" id="entradaGaleria" accept="image/*" style="display:none">
     </div>
 
     <div class="previa-contenedor">
@@ -147,8 +152,10 @@
 <script src="js/analizador.js"></script>
 <script src="js/priorizador.js"></script>
 <script>
-const zonaCarga = document.getElementById("zonaCarga");
-const entradaArchivo = document.getElementById("entradaArchivo");
+const botonCamara = document.getElementById("botonCamara");
+const botonGaleria = document.getElementById("botonGaleria");
+const entradaCamara = document.getElementById("entradaCamara");
+const entradaGaleria = document.getElementById("entradaGaleria");
 const previa = document.getElementById("previa");
 const botonAnalizar = document.getElementById("botonAnalizar");
 const resultado = document.getElementById("resultado");
@@ -164,10 +171,10 @@ function esperar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-zonaCarga.addEventListener("click", () => entradaArchivo.click());
+botonCamara.addEventListener("click", () => entradaCamara.click());
+botonGaleria.addEventListener("click", () => entradaGaleria.click());
 
-entradaArchivo.addEventListener("change", () => {
-  const archivo = entradaArchivo.files[0];
+function manejarArchivoSeleccionado(archivo) {
   if (!archivo) return;
 
   const lector = new FileReader();
@@ -181,6 +188,14 @@ entradaArchivo.addEventListener("change", () => {
     document.getElementById("panelPrioridad").style.display = "none";
   };
   lector.readAsDataURL(archivo);
+}
+
+entradaCamara.addEventListener("change", () => {
+  manejarArchivoSeleccionado(entradaCamara.files[0]);
+});
+
+entradaGaleria.addEventListener("change", () => {
+  manejarArchivoSeleccionado(entradaGaleria.files[0]);
 });
 
 let analisisActual = null;
