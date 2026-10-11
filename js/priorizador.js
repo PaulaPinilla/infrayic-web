@@ -93,7 +93,7 @@ function explicarPrioridad(prioridad, datos) {
   texto += "qué tan cerca está de un colegio u hospital, cuántos reportes parecidos ya hay en esa zona, ";
   texto += "cuántos días lleva sin solución, y a cuántas personas afecta ese tipo de daño. ";
   texto += "Sumando todo eso, este reporte quedó en " + frasesNivel[prioridad.nivel] + " ";
-  texto += "(" + prioridad.puntaje + " de 105 puntos posibles).";
+  texto += "(" + prioridad.puntaje + " de 142 puntos posibles).";
 
   if (prioridad.nivel !== "alto") {
     const faltan = [];
