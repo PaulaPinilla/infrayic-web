@@ -657,3 +657,71 @@ header.sitio{
     z-index:150;
   }
 }
+
+/* ===== Proyectos ===== */
+.proyectos-grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:22px; margin-bottom:14px}
+.proyecto-card{display:flex; flex-direction:column; background:var(--blanco); border:1px solid var(--borde); border-radius:var(--radio); overflow:hidden; color:var(--gris-texto); transition:transform .15s ease, box-shadow .15s ease}
+a.proyecto-card:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(12,45,72,.15); color:var(--gris-texto)}
+.proyecto-card img{width:100%; display:block; aspect-ratio:5/3; object-fit:cover}
+.proyecto-info{padding:18px 20px 22px}
+.proyecto-info h3{margin:0 0 6px}
+.proyecto-info p{margin:0 0 10px; color:var(--gris-suave); font-size:14px}
+.proyectos-lista{display:grid; gap:28px}
+.proyecto-completo{flex-direction:row; align-items:stretch; scroll-margin-top:110px}
+.proyecto-completo img{width:42%; aspect-ratio:auto; object-fit:cover}
+.proyecto-completo .proyecto-info{flex:1; padding:24px}
+.proyecto-completo .proyecto-info p{font-size:15px; color:var(--gris-texto)}
+.etiqueta-proyecto{display:inline-block; font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; background:var(--amarillo-suave); color:var(--azul-oscuro); padding:4px 10px; border-radius:999px; margin-bottom:8px}
+.proyecto-info .boton{display:inline-block; margin-top:8px}
+.proyecto-info p:last-child{margin-top:14px}
+@media (max-width:640px){
+  .proyecto-completo{flex-direction:column}
+  .proyecto-completo img{width:100%; aspect-ratio:5/3}
+}
+
+/* ===== Iconos de linea y senales de verificacion ===== */
+.svg-icono{width:26px; height:26px; stroke:currentColor; fill:none; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round}
+.distintivo .svg-icono{width:22px; height:22px}
+.desglose .senal{list-style:none; position:relative; margin-left:-2px; padding-left:18px}
+.desglose .senal::before{content:""; position:absolute; left:0; top:.55em; width:8px; height:8px; border-radius:50%}
+.desglose .senal-ok::before{background:var(--verde-ok)}
+.desglose .senal-alerta::before{background:var(--ambar)}
+
+/* ===== Proyectos: ficha detallada ===== */
+.pry-detalle{display:grid; grid-template-columns:1fr 1fr; gap:22px 40px; align-items:center; padding:38px 0; border-bottom:1px solid var(--borde); scroll-margin-top:110px}
+.pry-foto{margin:0}
+.pry-foto img{width:100%; aspect-ratio:4/3; object-fit:cover; display:block; border-radius:var(--radio); box-shadow:0 10px 28px rgba(12,45,72,.18)}
+.pry-detalle.invertido .pry-foto{order:2}
+.pry-texto h3{font-size:28px; margin:6px 0 4px}
+.pry-subtitulo{font-weight:600; color:var(--azul-oscuro); margin:0 0 12px}
+.pry-datos{grid-column:1 / -1; display:grid; grid-template-columns:repeat(3, 1fr); gap:16px}
+.pry-datos > div{background:#F4F8FB; border:1px solid var(--borde); border-left:4px solid var(--azul-oscuro); border-radius:var(--radio); padding:16px 18px}
+.pry-datos h4{margin:0 0 6px; font-size:14px; color:var(--azul-oscuro)}
+.pry-datos p{margin:0; font-size:14px; color:var(--gris-texto)}
+.pry-cierre{margin-top:28px; font-weight:600}
+@media (max-width:820px){
+  .pry-detalle{grid-template-columns:1fr}
+  .pry-detalle.invertido .pry-foto{order:0}
+  .pry-datos{grid-template-columns:1fr}
+}
+
+/* ===== Correccion: ficha de proyecto en dos columnas ===== */
+.pry-detalle .pry-foto{grid-column:1; grid-row:1; order:0}
+.pry-detalle .pry-texto{grid-column:2; grid-row:1; order:0}
+.pry-detalle.invertido .pry-foto{grid-column:2; grid-row:1; order:0}
+.pry-detalle.invertido .pry-texto{grid-column:1; grid-row:1; order:0}
+.pry-detalle .pry-datos{grid-column:1 / -1; grid-row:2}
+@media (max-width:820px){
+  .pry-detalle .pry-foto, .pry-detalle.invertido .pry-foto{grid-column:1; grid-row:1}
+  .pry-detalle .pry-texto, .pry-detalle.invertido .pry-texto{grid-column:1; grid-row:2}
+  .pry-detalle .pry-datos{grid-column:1; grid-row:3}
+}
+
+/* ===== Correccion: encabezado ordenado en pantalla de computador ===== */
+@media (min-width:641px){
+  .barra{max-width:1240px; gap:20px; padding:12px 24px}
+  .marca{flex-direction:column; align-items:flex-start; gap:2px; flex-shrink:0}
+  nav.menu{gap:18px}
+  nav.menu a{font-size:14.5px; white-space:nowrap}
+  .logo-derecha{height:56px; border-radius:10px}
+}

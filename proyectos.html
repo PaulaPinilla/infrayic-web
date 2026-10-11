@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proyectos | Infrayic S.A.S.</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<header class="sitio">
+  <div class="barra">
+    <div class="marca">Infrayic S.A.S.<span class="sub">Gestión de infraestructura urbana</span></div>
+    <nav class="menu" id="menuNav">
+      <button class="cerrar-menu" id="botonCerrarMenu" aria-label="Cerrar menú">&times;</button>
+      <a href="index.html">Inicio</a>
+      <a href="empresa.html">La empresa</a>
+      <a href="bogovial.html">BogoVial</a>
+      <a href="proyectos.html" class="activo">Proyectos</a>
+      <a href="equipo.html">Nuestro equipo</a>
+      <a href="reporta.html">Reporta un daño</a>
+      <a href="panel.html">Panel Inteligente</a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+    <img src="assets/images/logo.png" alt="Infrayic S.A.S." class="logo-derecha">
+    <button class="boton-menu" id="botonMenu" aria-label="Abrir menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+<div class="fondo-menu" id="fondoMenu"></div>
+
+<main>
+
+  <section class="seccion">
+    <h2>Nuestros proyectos</h2>
+    <p>Infrayic S.A.S. combina Ingeniería Civil e Ingeniería de Sistemas para gestionar la infraestructura urbana de Bogotá. Nuestro proyecto principal en este momento es <a href="bogovial.html">BogoVial</a>, la plataforma de reporte y priorización de daños viales. Estos son otros proyectos de nuestro portafolio.</p>
+
+    <article class="pry-detalle" id="hidrosensor">
+      <figure class="pry-foto">
+        <img src="assets/images/alcantarillado.jpeg" alt="Sumidero y rejilla de alcantarillado en una calle">
+      </figure>
+      <div class="pry-texto">
+        <span class="etiqueta-proyecto">Drenaje pluvial</span>
+        <h3>HidroSensor</h3>
+        <p class="pry-subtitulo">Monitoreo del nivel de agua en sumideros y cajas de inspección</p>
+        <p>HidroSensor es una red de sensores de bajo costo instalados en sumideros, rejillas y cajas de inspección del alcantarillado pluvial. Un tablero de control muestra en tiempo real el nivel de agua de cada punto y avisa cuando un tramo se acerca al desbordamiento, de modo que la limpieza se programe antes de las temporadas de lluvia y no después de la inundación.</p>
+        <ul class="lista-limpia">
+          <li>Se levantó el inventario y el diagnóstico de sumideros, rejillas y colectores del sector de intervención.</li>
+          <li>Se identificaron los puntos críticos de encharcamiento a partir del histórico de reportes de la comunidad.</li>
+          <li>Se diseñó el nodo sensor y el esquema de transmisión de datos al tablero de control.</li>
+          <li>Se definieron tres niveles de alerta: normal, vigilancia y crítico.</li>
+        </ul>
+      </div>
+      <div class="pry-datos">
+        <div>
+          <h4>Componente de Ingeniería Civil</h4>
+          <p>Diagnóstico hidráulico del drenaje, ubicación de los puntos de medición y criterios de mantenimiento preventivo de sumideros y rejillas.</p>
+        </div>
+        <div>
+          <h4>Componente de Ingeniería de Sistemas</h4>
+          <p>Sensores de nivel, transmisión inalámbrica, base de datos de lecturas, tablero en línea y alertas automáticas por umbral.</p>
+        </div>
+        <div>
+          <h4>Resultado esperado</h4>
+          <p>Un plan de limpieza priorizado por riesgo de desbordamiento, con trazabilidad de cada intervención realizada.</p>
+        </div>
+      </div>
+    </article>
+
+    <article class="pry-detalle invertido" id="obratrack">
+      <figure class="pry-foto">
+        <img src="assets/images/rodillo.jpeg" alt="Rodillo compactador en una obra de pavimentación">
+      </figure>
+      <div class="pry-texto">
+        <span class="etiqueta-proyecto">Control de obra</span>
+        <h3>ObraTrack</h3>
+        <p class="pry-subtitulo">Seguimiento del avance de obras viales con evidencia verificable</p>
+        <p>ObraTrack es una plataforma para controlar obras de rehabilitación y pavimentación de vías. Reúne en un solo lugar el cronograma, las cantidades ejecutadas y la evidencia fotográfica de cada frente de obra, para que la entidad contratante conozca el avance real y pueda tomar decisiones con información al día.</p>
+        <ul class="lista-limpia">
+          <li>Se estructuró el control de cantidades de obra por frente: fresado, base, compactación y capa de rodadura.</li>
+          <li>Se definió el formato de acta de avance con fecha, ubicación y registro fotográfico.</li>
+          <li>Se construyó el tablero que compara lo programado con lo ejecutado.</li>
+          <li>Se estableció el informe periódico automático para la entidad contratante.</li>
+        </ul>
+      </div>
+      <div class="pry-datos">
+        <div>
+          <h4>Componente de Ingeniería Civil</h4>
+          <p>Control de cantidades, seguimiento de las capas del pavimento, programación de actividades y verificación de las especificaciones técnicas de la obra.</p>
+        </div>
+        <div>
+          <h4>Componente de Ingeniería de Sistemas</h4>
+          <p>Registro de evidencias desde el celular, base de datos de avances, tablero de cumplimiento y generación de informes.</p>
+        </div>
+        <div>
+          <h4>Resultado esperado</h4>
+          <p>Informes de avance consistentes y trazables, con alerta temprana de atrasos frente al cronograma.</p>
+        </div>
+      </div>
+    </article>
+
+    <p class="pry-cierre">Conoce también nuestro proyecto principal: <a href="bogovial.html">BogoVial, reporte y priorización de daños viales &rarr;</a></p>
+  </section>
+
+</main>
+
+<footer class="sitio">Infrayic S.A.S.</footer>
+
+<script src="js/menu.js"></script>
+
+</body>
+</html>

@@ -15,7 +15,8 @@
       <button class="cerrar-menu" id="botonCerrarMenu" aria-label="Cerrar menú">&times;</button>
       <a href="index.html">Inicio</a>
       <a href="empresa.html">La empresa</a>
-      <a href="bogovial.html">Proyecto BogoVial</a>
+      <a href="bogovial.html">BogoVial</a>
+      <a href="proyectos.html">Proyectos</a>
       <a href="equipo.html">Nuestro equipo</a>
       <a href="reporta.html">Reporta un daño</a>
       <a href="panel.html" class="activo">Panel Inteligente</a>
@@ -48,15 +49,15 @@
       <p>BogoVial no solo almacena reportes: los analiza con tres módulos para decidir qué daño atender primero y anticipar dónde pueden aparecer nuevos problemas.</p>
       <div class="tarjetas">
         <div class="tarjeta">
-          <h3>📷 Clasificador</h3>
+          <h3>Clasificador</h3>
           <p>Analiza la foto del daño y estima su severidad (algoritmo de procesamiento de imágenes, ver "Reporta un daño").</p>
         </div>
         <div class="tarjeta">
-          <h3>⚠️ Priorizador</h3>
+          <h3>Priorizador</h3>
           <p>Cruza severidad, cercanía a colegios/hospitales, reportes repetidos y tiempo sin solución en un puntaje de prioridad.</p>
         </div>
         <div class="tarjeta">
-          <h3>🛣️ Predictor</h3>
+          <h3>Predictor</h3>
           <p>Agrupa los reportes históricos por zona para estimar qué puntos del sector piloto tienen mayor probabilidad de presentar nuevos daños.</p>
         </div>
       </div>
@@ -87,16 +88,16 @@
 
     <section class="seccion">
       <h2>Cola de atención priorizada</h2>
-      <p>Todos los reportes ordenados de mayor a menor puntaje de prioridad. Marca el estado de cada uno a medida que haces las visitas, y deja comentarios de seguimiento — el ciudadano los ve en "Reporta un daño".</p>
-          <p class="nota">Desliza la tabla hacia los lados para ver todas las columnas.</p>
-    <div class="tabla-scroll">
-      <table class="tabla tabla-prioridad" id="tablaReportes">
-        <thead>
-          <tr><th>Zona</th><th>Tipo</th><th>Severidad</th><th>Prioridad</th><th>Puntaje</th><th>Fecha</th></tr>
-        </thead>
-        <tbody id="cuerpoTablaReportes"></tbody>
-      </table>
-    </div>
+      <p>Todos los reportes ordenados de mayor a menor puntaje de prioridad. Toca la foto para ver el tramo dañado, su ubicación y la verificación de autenticidad. Marca cada reporte como válido o falso, cambia su estado a medida que haces las visitas y deja comentarios de seguimiento — el ciudadano los ve en "Reporta un daño".</p>
+      <p class="nota">Desliza la tabla hacia los lados para ver todas las columnas.</p>
+      <div class="tabla-scroll">
+        <table class="tabla tabla-prioridad" id="tablaReportes">
+          <thead>
+            <tr><th>Foto</th><th>Zona</th><th>Tipo</th><th>Severidad</th><th>Prioridad</th><th>Puntaje</th><th>Fecha</th><th>Autenticidad</th><th>Revisión</th><th>Estado</th><th>Seguimiento</th></tr>
+          </thead>
+          <tbody id="cuerpoTablaReportes"></tbody>
+        </table>
+      </div>
     </section>
 
     <section class="seccion">
@@ -108,6 +109,13 @@
   </div>
 
 </main>
+
+<div class="modal-detalle" id="modalDetalle" style="display:none">
+  <div class="modal-contenido">
+    <button class="modal-cerrar" id="modalCerrar" aria-label="Cerrar">&times;</button>
+    <div id="modalCuerpo"></div>
+  </div>
+</div>
 
 <footer class="sitio">Infrayic S.A.S.</footer>
 

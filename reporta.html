@@ -15,7 +15,8 @@
       <button class="cerrar-menu" id="botonCerrarMenu" aria-label="Cerrar menú">&times;</button>
       <a href="index.html">Inicio</a>
       <a href="empresa.html">La empresa</a>
-      <a href="bogovial.html">Proyecto BogoVial</a>
+      <a href="bogovial.html">BogoVial</a>
+      <a href="proyectos.html">Proyectos</a>
       <a href="equipo.html">Nuestro equipo</a>
       <a href="reporta.html" class="activo">Reporta un daño</a>
       <a href="panel.html">Panel Inteligente</a>
@@ -39,14 +40,9 @@
   <section class="seccion panel-ia">
 
     <div class="zona-carga" id="zonaCarga">
-      <p><strong>Sube una foto del daño</strong></p>
+      <p><strong>Toca para tomar una foto o subir una desde tu galería</strong></p>
       <p class="nota">Formatos JPG o PNG</p>
-      <div class="botones-carga">
-        <button type="button" class="boton-secundario" id="botonCamara"> Tomar foto</button>
-        <button type="button" class="boton-secundario" id="botonGaleria"> Elegir de galería</button>
-      </div>
-      <input type="file" id="entradaCamara" accept="image/*" capture="environment" style="display:none">
-      <input type="file" id="entradaGaleria" accept="image/*" style="display:none">
+      <input type="file" id="entradaArchivo" accept="image/*" style="display:none">
     </div>
 
     <div class="previa-contenedor">
@@ -62,6 +58,12 @@
       <h3 id="resultadoTitulo"></h3>
       <p id="resultadoDescripcion"></p>
       <p class="nota">Indicador de densidad de bordes detectado por el sistema: <span id="resultadoDensidad"></span>%</p>
+    </div>
+
+    <div class="resultado" id="panelVerificacion">
+      <h3>Verificación de autenticidad de la foto</h3>
+      <p class="nota">Comprobamos que la foto sea real y reciente: metadatos de cámara, ubicación, marcas de generadores de IA e imágenes repetidas. El ingeniero civil revisa el resultado final.</p>
+      <div id="verificacionContenido"></div>
     </div>
 
     <div class="resultado" id="panelPrioridad">
@@ -80,7 +82,7 @@
 
       <div class="campo">
         <label for="campoZona">Ubicación o punto de referencia</label>
-        <input type="text" id="campoZona" placeholder="Ej: Calle 48 con Carrera 16, Chapinero">
+        <input type="text" id="campoZona" placeholder="Ej: Calle 48 con Carrera 16, Quesada, Teusaquillo">
       </div>
 
       <div class="campo-check">
@@ -133,12 +135,15 @@
   <section class="seccion">
     <h2>Consulta el estado de los reportes</h2>
     <p>Aquí puedes ver en qué va cada reporte y los comentarios de seguimiento que deja el equipo de Ingeniería Civil — para que sepas que tu reporte sí fue visto y no quedó ignorado. Esta tabla es solo de consulta; el ingeniero a cargo es quien actualiza el estado desde el Panel Inteligente.</p>
-    <table class="tabla tabla-prioridad" id="tablaSeguimiento">
-      <thead>
-        <tr><th>Zona</th><th>Tipo</th><th>Prioridad</th><th>Estado</th><th>Último comentario del equipo</th></tr>
-      </thead>
-      <tbody id="cuerpoTablaSeguimiento"></tbody>
-    </table>
+    <p class="nota">Desliza la tabla hacia los lados para ver todas las columnas.</p>
+    <div class="tabla-scroll">
+      <table class="tabla tabla-prioridad" id="tablaSeguimiento">
+        <thead>
+          <tr><th>Zona</th><th>Tipo</th><th>Prioridad</th><th>Estado</th><th>Último comentario del equipo</th></tr>
+        </thead>
+        <tbody id="cuerpoTablaSeguimiento"></tbody>
+      </table>
+    </div>
   </section>
 
 </main>
@@ -150,12 +155,11 @@
 <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
 <script src="js/firebase-config.js"></script>
 <script src="js/analizador.js"></script>
+<script src="js/verificador.js"></script>
 <script src="js/priorizador.js"></script>
 <script>
-const botonCamara = document.getElementById("botonCamara");
-const botonGaleria = document.getElementById("botonGaleria");
-const entradaCamara = document.getElementById("entradaCamara");
-const entradaGaleria = document.getElementById("entradaGaleria");
+const zonaCarga = document.getElementById("zonaCarga");
+const entradaArchivo = document.getElementById("entradaArchivo");
 const previa = document.getElementById("previa");
 const botonAnalizar = document.getElementById("botonAnalizar");
 const resultado = document.getElementById("resultado");
@@ -166,15 +170,50 @@ const botonPriorizar = document.getElementById("botonPriorizar");
 const cargandoIA = document.getElementById("cargandoIA");
 const resultadoPrioridad = document.getElementById("resultadoPrioridad");
 const badgeSobreFoto = document.getElementById("badgeSobreFoto");
+const panelVerificacion = document.getElementById("panelVerificacion");
+const verificacionContenido = document.getElementById("verificacionContenido");
+
+let verificacionActual = null;
+let promesaVerificacion = null;
+
+async function obtenerHuellasPrevias() {
+  try {
+    const snap = await db.collection("reportes").get();
+    return snap.docs.map((d) => d.data().hashImagen).filter(Boolean);
+  } catch (e) {
+    return [];
+  }
+}
+
+function pintarVerificacion(v) {
+  const etiqueta = ETIQUETAS_VERIFICACION[v.nivel];
+  verificacionContenido.innerHTML =
+    '<p><span class="badge badge-' + etiqueta.clase + '">' + etiqueta.texto + "</span> " +
+    "<strong>" + v.puntaje + " / 100</strong></p>" +
+    '<ul class="desglose">' +
+    v.senales.map((x) => '<li class="senal ' + (x.ok ? "senal-ok" : "senal-alerta") + '">' + x.texto + "</li>").join("") +
+    "</ul>";
+}
+
+async function verificarFotoSeleccionada(archivo) {
+  verificacionActual = null;
+  panelVerificacion.style.display = "block";
+  verificacionContenido.innerHTML = '<p class="nota">Verificando la foto…</p>';
+  await new Promise((ok) => { if (previa.complete && previa.naturalWidth) ok(); else previa.onload = ok; });
+  const [ubicacion, huellas] = await Promise.all([obtenerUbicacion(), obtenerHuellasPrevias()]);
+  verificacionActual = await verificarImagen(archivo, previa, ubicacion, huellas);
+  pintarVerificacion(verificacionActual);
+  return verificacionActual;
+}
 
 function esperar(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-botonCamara.addEventListener("click", () => entradaCamara.click());
-botonGaleria.addEventListener("click", () => entradaGaleria.click());
+zonaCarga.addEventListener("click", () => entradaArchivo.click());
 
-function manejarArchivoSeleccionado(archivo) {
+entradaArchivo.addEventListener("change", () => {
+  const archivo = entradaArchivo.files[0];
   if (!archivo) return;
 
   const lector = new FileReader();
@@ -186,16 +225,9 @@ function manejarArchivoSeleccionado(archivo) {
     botonAnalizar.disabled = false;
     resultado.style.display = "none";
     document.getElementById("panelPrioridad").style.display = "none";
+    promesaVerificacion = verificarFotoSeleccionada(archivo);
   };
   lector.readAsDataURL(archivo);
-}
-
-entradaCamara.addEventListener("change", () => {
-  manejarArchivoSeleccionado(entradaCamara.files[0]);
-});
-
-entradaGaleria.addEventListener("change", () => {
-  manejarArchivoSeleccionado(entradaGaleria.files[0]);
 });
 
 let analisisActual = null;
@@ -232,6 +264,12 @@ botonPriorizar.addEventListener("click", async () => {
   if (!analisisActual) return;
 
   botonPriorizar.disabled = true;
+  const verificacion = await promesaVerificacion;
+  if (verificacion && verificacion.duplicado) {
+    alert("Esta foto ya fue enviada en otro reporte. Sube una foto nueva del daño.");
+    botonPriorizar.disabled = false;
+    return;
+  }
   resultadoPrioridad.style.display = "none";
   cargandoIA.style.display = "block";
 
@@ -261,12 +299,21 @@ botonPriorizar.addEventListener("click", async () => {
     prioridad: prioridad.nivel,
     puntaje: prioridad.puntaje,
     fecha: new Date().toISOString(),
+    foto: verificacion.fotoComprimida,
+    hashImagen: verificacion.huella,
+    gps: verificacion.gps || null,
+    verificacion: {
+      puntaje: verificacion.puntaje,
+      nivel: verificacion.nivel,
+      senales: verificacion.senales.map((x) => (x.ok ? "OK: " : "ALERTA: ") + x.texto),
+    },
+    revisionIngeniero: "Pendiente",
   });
 
   cargandoIA.style.display = "none";
   resultadoPrioridad.style.display = "block";
   botonPriorizar.disabled = false;
-  botonPriorizar.textContent = "Reporte guardado ✓ (puedes analizar otro)";
+  botonPriorizar.textContent = "Reporte guardado (puedes analizar otro)";
 });
 
 const ETIQUETAS_TIPO_SEGUIMIENTO = {
