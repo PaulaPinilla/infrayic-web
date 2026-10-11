@@ -15,7 +15,6 @@
       <button class="cerrar-menu" id="botonCerrarMenu" aria-label="Cerrar menú">&times;</button>
       <a href="index.html">Inicio</a>
       <a href="empresa.html">La empresa</a>
-      <a href="bogovial.html">BogoVial</a>
       <a href="proyectos.html">Proyectos</a>
       <a href="equipo.html">Nuestro equipo</a>
       <a href="reporta.html" class="activo">Reporta un daño</a>
@@ -175,6 +174,7 @@ const verificacionContenido = document.getElementById("verificacionContenido");
 
 let verificacionActual = null;
 let promesaVerificacion = null;
+let fotoValida = false;
 
 async function obtenerHuellasPrevias() {
   try {
@@ -225,7 +225,26 @@ entradaArchivo.addEventListener("change", () => {
     botonAnalizar.disabled = false;
     resultado.style.display = "none";
     document.getElementById("panelPrioridad").style.display = "none";
-    promesaVerificacion = verificarFotoSeleccionada(archivo);
+    fotoValida = false;
+    botonAnalizar.disabled = true;
+    panelVerificacion.style.display = "block";
+    verificacionContenido.innerHTML = '<p class="nota">Revisando que la imagen sea un daño en la vía…</p>';
+    previa.onload = null;
+    const revisar = async () => {
+      const relevancia = await esFotoDeVia(previa);
+      if (!relevancia.valida) {
+        previa.className = "";
+        verificacionContenido.innerHTML =
+          '<p><span class="badge badge-alto">Imagen no válida</span></p>' +
+          '<p>' + relevancia.motivo + ' Sube una foto de un hueco, un andén dañado o una señal deteriorada.</p>';
+        promesaVerificacion = null;
+        return;
+      }
+      fotoValida = true;
+      botonAnalizar.disabled = false;
+      promesaVerificacion = verificarFotoSeleccionada(archivo);
+    };
+    if (previa.complete && previa.naturalWidth) revisar(); else previa.onload = revisar;
   };
   lector.readAsDataURL(archivo);
 });
@@ -233,6 +252,7 @@ entradaArchivo.addEventListener("change", () => {
 let analisisActual = null;
 
 botonAnalizar.addEventListener("click", async () => {
+  if (!fotoValida) return;
   botonAnalizar.disabled = true;
   botonAnalizar.textContent = "Analizando...";
 
@@ -261,7 +281,7 @@ botonAnalizar.addEventListener("click", async () => {
 });
 
 botonPriorizar.addEventListener("click", async () => {
-  if (!analisisActual) return;
+  if (!analisisActual || !fotoValida || !promesaVerificacion) return;
 
   botonPriorizar.disabled = true;
   const verificacion = await promesaVerificacion;
