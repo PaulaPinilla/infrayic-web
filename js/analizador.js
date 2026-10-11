@@ -1,12 +1,12 @@
 /*
   Prototipo del algoritmo de analisis de severidad para BogoVial.
- 
+
   Que hace realmente:
   Este NO es un modelo de red neuronal entrenado (eso requeriria miles de
   fotos de huecos/andenes etiquetadas, que el proyecto academico no tiene).
   Es un algoritmo de procesamiento de imagenes que corre 100% en el
   navegador del ciudadano (sin servidor, sin enviar la foto a ningun lado):
- 
+
   1. Dibuja la foto en un <canvas> oculto.
   2. La convierte a escala de grises.
   3. Aplica el operador de Sobel (deteccion de bordes) para encontrar
@@ -14,35 +14,35 @@
      irregulares generan muchos bordes; una superficie lisa genera pocos.
   4. Calcula la "densidad de bordes" (porcentaje de pixeles que son borde).
   5. Clasifica esa densidad en Bajo / Medio / Alto segun unos umbrales.
- 
+
   Esto sirve como prueba de concepto funcional del flujo "sube la foto,
   el sistema te dice el nivel de severidad". El siguiente paso real del
   proyecto (fuera del alcance academico actual) seria reemplazar este
   algoritmo por un modelo de vision por computador (ej. una red
   convolucional) entrenado con fotos reales de las vias de Bogota.
 */
- 
+
 function analizarImagen(imgElement) {
   const ancho = 300;
   const alto = Math.round((imgElement.naturalHeight / imgElement.naturalWidth) * ancho) || 300;
- 
+
   const canvas = document.createElement("canvas");
   canvas.width = ancho;
   canvas.height = alto;
   const ctx = canvas.getContext("2d");
   ctx.drawImage(imgElement, 0, 0, ancho, alto);
- 
+
   const datos = ctx.getImageData(0, 0, ancho, alto);
   const gris = aEscalaDeGrises(datos, ancho, alto);
   const bordes = sobel(gris, ancho, alto);
- 
+
   let pixelesBorde = 0;
   const umbralBorde = 90;
   for (let i = 0; i < bordes.length; i++) {
     if (bordes[i] > umbralBorde) pixelesBorde++;
   }
   const densidad = pixelesBorde / bordes.length;
- 
+
   let nivel, etiqueta, recomendacion;
   if (densidad < 0.07) {
     nivel = "bajo";
@@ -57,7 +57,7 @@ function analizarImagen(imgElement) {
     etiqueta = "Severidad alta";
     recomendacion = "Deterioro considerable o posible riesgo para peatones/vehiculos. Se escala a Ingenieria Civil para priorizacion inmediata.";
   }
- 
+
   return {
     nivel,
     etiqueta,
@@ -65,7 +65,7 @@ function analizarImagen(imgElement) {
     densidad: (densidad * 100).toFixed(1),
   };
 }
- 
+
 function aEscalaDeGrises(datosImagen, ancho, alto) {
   const out = new Uint8ClampedArray(ancho * alto);
   const d = datosImagen.data;
@@ -74,12 +74,12 @@ function aEscalaDeGrises(datosImagen, ancho, alto) {
   }
   return out;
 }
- 
+
 function sobel(gris, ancho, alto) {
   const out = new Uint8ClampedArray(ancho * alto);
   const gx = [-1, 0, 1, -2, 0, 2, -1, 0, 1];
   const gy = [-1, -2, -1, 0, 0, 0, 1, 2, 1];
- 
+
   for (let y = 1; y < alto - 1; y++) {
     for (let x = 1; x < ancho - 1; x++) {
       let sx = 0, sy = 0, k = 0;
@@ -97,15 +97,15 @@ function sobel(gris, ancho, alto) {
   }
   return out;
 }
- 
+
 /* ------------------------------------------------------------------
    FILTRO DE RELEVANCIA: "esta foto es de un dano en la via?"
- 
+
    Antes de calcular la severidad, el sitio revisa que la imagen sea
    plausiblemente del espacio publico (pavimento, anden, senalizacion).
    Si es una mascota, una persona, comida o un paisaje, se rechaza y no
    se analiza ni se guarda. Usa dos capas:
- 
+
    1. Capa de color (siempre funciona, sin internet extra): mide cuanto
       de la imagen es "color de via" (grises de asfalto y concreto,
       tierra) y cuanto es verde/cielo. Una foto de un perro sobre pasto
@@ -114,12 +114,12 @@ function sobel(gris, ancho, alto) {
       neuronal ya entrenada con 1.000 categorias generales que reconoce
       animales, comida, plantas y personas. Se descarga en segundo plano
       la primera vez; si no se puede cargar, queda activa solo la capa 1.
- 
+
    Importante: esto es un FILTRO de relevancia, no el modelo de dano.
    Las dos capas son prototipo y pueden fallar con fotos ambiguas; por
    eso el ingeniero siempre revisa cada reporte en el panel.
 ------------------------------------------------------------------- */
- 
+
 function evaluarPixeles(datos, total) {
   let vial = 0, verde = 0, cielo = 0, vivo = 0;
   for (let i = 0; i < datos.length; i += 4) {
@@ -144,7 +144,7 @@ function evaluarPixeles(datos, total) {
   }
   return { vial: vial / total, verde: verde / total, cielo: cielo / total, vivo: vivo / total };
 }
- 
+
 function filtroPorColor(imgElement) {
   const ancho = 120;
   const alto = Math.round((imgElement.naturalHeight / imgElement.naturalWidth) * ancho) || 120;
@@ -154,17 +154,17 @@ function filtroPorColor(imgElement) {
   const ctx = canvas.getContext("2d");
   ctx.drawImage(imgElement, 0, 0, ancho, alto);
   const m = evaluarPixeles(ctx.getImageData(0, 0, ancho, alto).data, ancho * alto);
-  const valida = m.vial >= 0.30 && m.verde <= 0.45 && m.cielo <= 0.5 && m.vivo <= 0.45;
+  const valida = m.vial >= 0.35 && m.verde <= 0.30 && m.cielo <= 0.45 && m.vivo <= 0.40;
   return { valida, metricas: m };
 }
- 
+
 /* Categorias de MobileNet (ImageNet) que nunca son un dano vial:
    0-397 animales, 924-969 comida, 981-983 personas, 984-993 plantas y hongos. */
 function esCategoriaNoVial(indice) {
   return (indice >= 0 && indice <= 397) || (indice >= 924 && indice <= 969) ||
          (indice >= 981 && indice <= 993);
 }
- 
+
 let promesaModeloVista = null;
 function cargarModeloVista() {
   if (promesaModeloVista) return promesaModeloVista;
@@ -180,7 +180,7 @@ function cargarModeloVista() {
   })().catch(() => null);
   return promesaModeloVista;
 }
- 
+
 async function filtroPorModelo(imgElement) {
   const modelo = await Promise.race([cargarModeloVista(), new Promise((ok) => setTimeout(() => ok(null), 12000))]);
   if (!modelo) return { disponible: false, valida: true };
@@ -192,11 +192,12 @@ async function filtroPorModelo(imgElement) {
   const noVial = top.filter((t) => esCategoriaNoVial(t.i)).reduce((a, t) => a + t.p, 0);
   return { disponible: true, valida: noVial < 0.35, noVial };
 }
- 
+
 async function esFotoDeVia(imgElement) {
   const color = filtroPorColor(imgElement);
   if (!color.valida) {
-    return { valida: false, motivo: "La imagen no tiene los colores de una vía o un andén (predominan tonos vivos, vegetación o cielo)." };
+    const m = color.metricas;
+    return { valida: false, motivo: "La imagen no tiene los colores de una vía o un andén (colores de vía: " + Math.round(m.vial * 100) + " %, vegetación: " + Math.round(m.verde * 100) + " %, tonos vivos: " + Math.round(m.vivo * 100) + " %)." };
   }
   let modelo;
   try { modelo = await filtroPorModelo(imgElement); } catch (e) { modelo = { disponible: false, valida: true }; }
@@ -205,6 +206,6 @@ async function esFotoDeVia(imgElement) {
   }
   return { valida: true, motivo: "", usoModelo: modelo.disponible };
 }
- 
+
 // Empieza a descargar el modelo en segundo plano apenas carga la pagina.
 if (typeof window !== "undefined") window.addEventListener("load", () => setTimeout(cargarModeloVista, 1500));
