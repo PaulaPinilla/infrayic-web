@@ -108,12 +108,15 @@ function sobel(gris, ancho, alto) {
 
    1. Capa de color (siempre funciona, sin internet extra): mide cuanto
       de la imagen es "color de via" (grises de asfalto y concreto,
-      tierra) y cuanto es verde/cielo. Una foto de un perro sobre pasto
-      es casi toda verde y de color vivo, asi que se rechaza.
+      tierra) y cuanto es verde/cielo. Sirve para descartar fotos de
+      cielo, vegetacion o colores vivos. NO basta para una mascota sobre
+      pasto apagado (sus colores parecen grises), por eso existe la capa 2.
    2. Capa de reconocimiento (MobileNet, de TensorFlow.js): una red
       neuronal ya entrenada con 1.000 categorias generales que reconoce
       animales, comida, plantas y personas. Se descarga en segundo plano
-      la primera vez; si no se puede cargar, queda activa solo la capa 1.
+      la primera vez (unos 17 MB, luego queda guardada en el navegador). Si
+      no se puede cargar, la foto NO se acepta: es preferible pedir que se
+      intente de nuevo a dejar pasar una imagen que no es de la via.
 
    Importante: esto es un FILTRO de relevancia, no el modelo de dano.
    Las dos capas son prototipo y pueden fallar con fotos ambiguas; por
@@ -176,21 +179,32 @@ function cargarModeloVista() {
   promesaModeloVista = (async () => {
     await cargarScript("https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js");
     await cargarScript("https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.1/dist/mobilenet.min.js");
-    return await mobilenet.load({ version: 1, alpha: 0.5 });
-  })().catch(() => null);
+    return await mobilenet.load();
+  })().catch((e) => {
+    console.warn("Reconocedor de imagenes no disponible:", e);
+    promesaModeloVista = null; // permite reintentar en la siguiente foto
+    return null;
+  });
   return promesaModeloVista;
 }
 
+/* Suma la probabilidad que la red le da a TODAS las categorias que no son
+   un dano vial (animales, comida, personas, plantas). Si la suma es alta,
+   la foto se rechaza. */
 async function filtroPorModelo(imgElement) {
-  const modelo = await Promise.race([cargarModeloVista(), new Promise((ok) => setTimeout(() => ok(null), 12000))]);
-  if (!modelo) return { disponible: false, valida: true };
+  const modelo = await Promise.race([cargarModeloVista(), new Promise((ok) => setTimeout(() => ok(null), 45000))]);
+  if (!modelo) return { disponible: false, valida: false };
   const logits = modelo.infer(imgElement, false);
   const probs = tf.softmax(logits);
   const arr = Array.from(await probs.data());
   logits.dispose(); probs.dispose();
-  const top = arr.map((p, i) => ({ p, i })).sort((a, b) => b.p - a.p).slice(0, 5);
-  const noVial = top.filter((t) => esCategoriaNoVial(t.i)).reduce((a, t) => a + t.p, 0);
-  return { disponible: true, valida: noVial < 0.35, noVial };
+  let noVial = 0;
+  for (let i = 0; i < arr.length; i++) if (esCategoriaNoVial(i)) noVial += arr[i];
+  try {
+    const top = await modelo.classify(imgElement, 3);
+    console.log("Reconocedor:", top.map((t) => t.className + " " + Math.round(t.probability * 100) + " %").join(" | "), "| no vial:", Math.round(noVial * 100) + " %");
+  } catch (e) {}
+  return { disponible: true, valida: noVial < 0.5, noVial };
 }
 
 async function esFotoDeVia(imgElement) {
@@ -200,11 +214,14 @@ async function esFotoDeVia(imgElement) {
     return { valida: false, motivo: "La imagen no tiene los colores de una vía o un andén (colores de vía: " + Math.round(m.vial * 100) + " %, vegetación: " + Math.round(m.verde * 100) + " %, tonos vivos: " + Math.round(m.vivo * 100) + " %)." };
   }
   let modelo;
-  try { modelo = await filtroPorModelo(imgElement); } catch (e) { modelo = { disponible: false, valida: true }; }
-  if (!modelo.valida) {
-    return { valida: false, motivo: "La imagen parece mostrar un animal, una persona, comida o plantas, no un daño en el espacio público." };
+  try { modelo = await filtroPorModelo(imgElement); } catch (e) { console.warn(e); modelo = { disponible: false, valida: false }; }
+  if (!modelo.disponible) {
+    return { valida: false, motivo: "No se pudo cargar el verificador de imágenes. Revisa tu conexión a internet y vuelve a subir la foto." };
   }
-  return { valida: true, motivo: "", usoModelo: modelo.disponible };
+  if (!modelo.valida) {
+    return { valida: false, motivo: "La imagen parece mostrar un animal, una persona, comida o plantas (" + Math.round(modelo.noVial * 100) + " % de coincidencia), no un daño en el espacio público." };
+  }
+  return { valida: true, motivo: "", usoModelo: true };
 }
 
 // Empieza a descargar el modelo en segundo plano apenas carga la pagina.

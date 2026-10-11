@@ -731,3 +731,8 @@ a.proyecto-card:hover{transform:translateY(-3px); box-shadow:0 10px 24px rgba(12
 .tabla-prioridad img.miniatura-reporte{width:84px; height:62px; max-width:84px; object-fit:cover; border-radius:6px; border:1px solid var(--borde); cursor:pointer; display:block}
 .tabla-prioridad img.miniatura-reporte:hover{box-shadow:0 4px 12px rgba(0,0,0,.3)}
 .modal-contenido img.foto-grande{width:auto; max-width:100%; max-height:55vh; object-fit:contain; border-radius:var(--radio); margin:0 auto 12px; display:block}
+
+/* Fotos del panel (version reforzada): sirve aunque la imagen no tenga clase */
+#tablaReportes td img, .tabla-prioridad td img{width:84px !important; height:62px !important; max-width:84px !important; object-fit:cover !important; border-radius:6px; border:1px solid #cfd6dc; cursor:pointer; display:block}
+#tablaReportes td:first-child, .tabla-prioridad td:first-child{width:104px; min-width:104px}
+.modal-contenido img{width:auto !important; max-width:100% !important; max-height:55vh !important; object-fit:contain; border-radius:10px; margin:0 auto 12px; display:block}
